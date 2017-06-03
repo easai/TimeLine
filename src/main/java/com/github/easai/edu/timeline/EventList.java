@@ -1,4 +1,5 @@
 package com.github.easai.edu.timeline;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
@@ -13,39 +14,38 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class Events {
+public class EventList {
 	String title = "";
-	ArrayList<EventItem> events = new ArrayList<EventItem>();
+	ArrayList<EventItem> eventList = new ArrayList<EventItem>();
 
 	public int addEvent(EventItem item) {
-		int nEvents = events.size();
+		int nEvents = eventList.size();
 		int i = 0;
 		if (nEvents > 0) {
-			while (events.get(i).from < item.from && ++i < nEvents)
+			while (eventList.get(i).from < item.from && ++i < nEvents)
 				;
 			if (i < nEvents) {
-				events.add(i, item);
+				eventList.add(i, item);
 			} else
-				events.add(item);
+				eventList.add(item);
 		} else {
-			i = events.size();
-			events.add(item);
+			i = eventList.size();
+			eventList.add(item);
 		}
 		return i;
 	}
 
 	public void deleteEvent(int index) {
-		EventItem item = events.get(index);
-		events.remove(index);
+		eventList.remove(index);
 	}
 
 	public int getMax() {
 		int maxYear = -1;
-		if (events.size() > 0) {
+		if (eventList.size() > 0) {
 			EventItem item;
-			maxYear = events.get(0).from;
-			for (int i = 0; i < events.size(); i++) {
-				item = events.get(i);
+			maxYear = eventList.get(0).from;
+			for (int i = 0; i < eventList.size(); i++) {
+				item = eventList.get(i);
 				if (maxYear < item.from)
 					maxYear = item.from;
 			}
@@ -55,11 +55,11 @@ public class Events {
 
 	public int getMin() {
 		int minYear = -1;
-		if (events.size() > 0) {
+		if (eventList.size() > 0) {
 			EventItem item;
-			minYear = events.get(0).from;
-			for (int i = 0; i < events.size(); i++) {
-				item = events.get(i);
+			minYear = eventList.get(0).from;
+			for (int i = 0; i < eventList.size(); i++) {
+				item = eventList.get(i);
 				if (item.from < minYear)
 					minYear = item.from;
 			}
@@ -141,8 +141,8 @@ public class Events {
 			writer.println("<catalog>");
 			writer.println("<title>" + title + "</title>");
 			EventItem item;
-			for (int i = 0; i < events.size(); i++) {
-				item = events.get(i);
+			for (int i = 0; i < eventList.size(); i++) {
+				item = eventList.get(i);
 				if (item.caption != null)
 					item.writeEvent(writer);
 			}

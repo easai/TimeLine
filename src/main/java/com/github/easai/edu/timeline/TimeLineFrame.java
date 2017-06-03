@@ -1,25 +1,25 @@
 package com.github.easai.edu.timeline;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+
+import java.util.Locale;
 
 import javax.swing.JFrame;
 
 public class TimeLineFrame extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	TimeLine timeLine = new TimeLine();
 
 	public void init() {
 		timeLine.init();
-		timeLine.menu.setMenu(timeLine, (ActionListener) timeLine, timeLine.comp, timeLine.menu.locale);
+		timeLine.menu.setMenu(this, timeLine, Locale.US);
 		add(timeLine);
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				dispose();
-			}
-		});
 
-		setSize(700, 800);
+		//setSize(700, 800);
+		pack();
 		setTitle("TimeLine");
 		setVisible(true);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 }

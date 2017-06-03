@@ -1,4 +1,5 @@
 package com.github.easai.edu.timeline;
+
 import java.awt.event.ActionListener;
 import java.util.Hashtable;
 import java.util.Locale;
@@ -12,62 +13,90 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 public class TimeLineMenu {
-	Locale locale = new Locale("en", "US");
+	Locale locale = Locale.US;
 	JMenuItem mi;
 	JMenuBar mb = new JMenuBar();
 	JMenu m[];
-	String menus[] = { "File", "Edit", "View", "Tools", "Help" };
+	Hashtable<JMenuItem, MENUITEM> comp = new Hashtable<>();
+	static String menus[] = { "File", "Edit", "View", "Tools", "Help" };
 	String menuitems[][] = { { "Open", "Save", "SaveAs", "Quit" }, { "Add", "Delete", "EditTitle" },
 			{ "Enlarge", "Shrink", "TextSizeIncrease", "TextSizeDecrease", "Reload", "Refresh" }, { "Options" },
-			{ "Help", "AboutTimeLine" } };
+			{ "Help", "About" } };
 
-	final static int nFileOpen = 0;
-	final static int nFileSave = 1;
-	final static int nFileSaveAs = 2;
-	final static int nFileQuit = 3;
-	final static int nEditAdd = 4;
-	final static int nEditDelete = 5;
-	final static int nEditEditTitle = 6;
-	final static int nViewEnlarge = 7;
-	final static int nViewShrink = 8;
-	final static int nViewTextSizeIncrease = 9;
-	final static int nViewTextSizeDecrease = 10;
-	final static int nViewReload = 11;
-	final static int nViewRefresh = 12;
-	final static int nToolsOptions = 13;
-	final static int nHelpHelp = 14;
-	final static int nHelpAboutTimeLine = 15;
+	enum MENUITEM {
+		nFileOpen, nFileSave, nFileSaveAs, nFileQuit, nEditAdd, nEditDelete, nEditEditTitle, nViewEnlarge, nViewShrink, nViewTextSizeIncrease, nViewTextSizeDecrease, nViewReload, nViewRefresh, nToolsOptions, nHelpHelp, nHelpAbout
+	};
 
-	int mi_num[][] = { { nFileOpen, nFileSave, nFileSaveAs, nFileQuit }, { nEditAdd, nEditDelete, nEditEditTitle },
-			{ nViewEnlarge, nViewShrink, nViewTextSizeIncrease, nViewTextSizeDecrease, nViewReload, nViewRefresh },
-			{ nToolsOptions }, { nHelpHelp, nHelpAboutTimeLine } };
+	MENUITEM mi_num[][] = { { MENUITEM.nFileOpen, MENUITEM.nFileSave, MENUITEM.nFileSaveAs, MENUITEM.nFileQuit },
+			{ MENUITEM.nEditAdd, MENUITEM.nEditDelete, MENUITEM.nEditEditTitle },
+			{ MENUITEM.nViewEnlarge, MENUITEM.nViewShrink, MENUITEM.nViewTextSizeIncrease,
+					MENUITEM.nViewTextSizeDecrease, MENUITEM.nViewReload, MENUITEM.nViewRefresh },
+			{ MENUITEM.nToolsOptions }, { MENUITEM.nHelpHelp, MENUITEM.nHelpAbout } };
 
-	public void setMenu(JFrame frame, ActionListener l, Hashtable<JMenuItem, Integer> comp, Locale locale) {
+	public void setMenu(JFrame frame, ActionListener l, Locale locale) {
 		this.locale = locale;
-		setMenu(l, comp);
+		setMenu(l);
 		frame.setJMenuBar(mb);
 	}
 
-	public void setMenu(JApplet ap, ActionListener l, Hashtable<JMenuItem, Integer> comp, Locale locale) {
+	public void setMenu(JApplet ap, ActionListener l, Locale locale) {
 		this.locale = locale;
-		setMenu(l, comp);
+		setMenu(l);
 		ap.setJMenuBar(mb);
 	}
 
-	public void setMenu(ActionListener l, Hashtable<JMenuItem, Integer> comp) {
+	public void setMenu(ActionListener l) {
 		// setMnemonic(new MenuShortcut(KeyEvent.VK_A))
 		m = new JMenu[menus.length];
-		ResourceBundle menuStrings = ResourceBundle.getBundle("TimeLineMenu", locale);
-		ResourceBundle menuItemStrings = ResourceBundle.getBundle("TimeLineMenuItem", locale);
+		ResourceBundle menuStrings = null;
+		ResourceBundle menuItemStrings = null;
+		String menuTitle, shortcuts = "";
+		if (locale != Locale.US) {
+			menuStrings = ResourceBundle.getBundle("JavaMenuMenuMenu", locale);
+			menuItemStrings = ResourceBundle.getBundle("JavaMenuMenuMenuItem", locale);
+		}
 
 		for (int i = 0; i < menus.length; i++) {
-			m[i] = new JMenu(menuStrings.getString(menus[i]));
+			if (locale == Locale.US) {
+				menuTitle = menus[i];
+			} else {
+				menuTitle = menuStrings.getString(menus[i]);
+			}
+			m[i] = new JMenu(menuTitle);
+			if (menuTitle != null && 0 < menuTitle.length()) {
+				m[i].setMnemonic(menuTitle.charAt(0));
+			}
 			if (i != menus.length - 1) {
 				mb.add(m[i]);
 			}
 			for (int j = 0; j < menuitems[i].length; j++) {
-				m[i].add(mi = new JMenuItem(menuItemStrings.getString(menuitems[i][j])));
-				comp.put(mi, new Integer(mi_num[i][j]));
+				String str = menuitems[i][j];
+				if (locale != Locale.US) {
+					str = menuItemStrings.getString(menuitems[i][j]);
+				}
+
+				if (str != null && 0 < str.length()) {
+
+					int index = 0;
+					char ch = str.charAt(index);
+					int len = str.length();
+					while (shortcuts.indexOf(ch) != -1 && ++index < len) {
+						ch = str.charAt(index);
+					}
+					if (index < len) {
+						mi = new JMenuItem(str, ch);
+						shortcuts += ch;
+					} else {
+						mi = new JMenuItem(str, str.charAt(0));
+					}
+
+				} else {
+					mi = new JMenuItem(str);
+				}
+
+				m[i].add(mi);
+
+				comp.put(mi, mi_num[i][j]);
 				mi.addActionListener(l);
 				// if ( // disabled menuitems
 				// mi_num[i][j] == nRun ||

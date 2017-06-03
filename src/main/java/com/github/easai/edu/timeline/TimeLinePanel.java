@@ -14,12 +14,15 @@ import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 
 public class TimeLinePanel extends JPanel implements Scrollable, MouseMotionListener {
-	Events events = null;
-	boolean debug = true;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	EventList events = null;	
 	private int maxUnitIncrement = 1;
 	int fontSize = -1;
 
-	TimeLinePanel(Events events) {
+	TimeLinePanel(EventList events) {
 		this.events = events;
 		setAutoscrolls(true);
 		addMouseMotionListener(this);
@@ -71,8 +74,8 @@ public class TimeLinePanel extends JPanel implements Scrollable, MouseMotionList
 
 		if (range > 0) {
 			double scale = (double) (height - bottomMargin - topMargin) / range;
-			for (int i = 0; i < events.events.size(); i++) {
-				EventItem item = events.events.get(i);
+			for (int i = 0; i < events.eventList.size(); i++) {
+				EventItem item = events.eventList.get(i);
 				int y = topMargin + (int) ((item.from - minYear) * scale);
 				g.drawLine(leftMargin - scaleWidth, y, leftMargin + scaleWidth, y);
 				if (item != null && item.caption != null && !item.caption.equals("")) {
@@ -83,8 +86,8 @@ public class TimeLinePanel extends JPanel implements Scrollable, MouseMotionList
 					g.drawString("" + item.from, (int) (leftMargin - rect.getWidth() - scaleWidth * 2), y);
 				}
 			}
-		} else if (events.events != null && events.events.size() > 0) {
-			EventItem item = events.events.get(0);
+		} else if (events.eventList != null && events.eventList.size() > 0) {
+			EventItem item = events.eventList.get(0);
 			int y = (height - bottomMargin - topMargin) / 2 + topMargin;
 			g.drawLine(leftMargin - scaleWidth, y, leftMargin + scaleWidth, y);
 			Rectangle2D rect = fm.getStringBounds(item.caption, g);
